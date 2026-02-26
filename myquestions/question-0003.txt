@@ -1,0 +1,1 @@
+"3) Escribe una funci¢n llamada aplicar_pca(X, n_componentes) que use sklearn para escalar datos y aplicar PCA." 

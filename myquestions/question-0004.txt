@@ -1,0 +1,1 @@
+"4) Escribe una funci¢n llamada preparar_modelo_split(df, target_col, cat_col) que use sklearn para codificar variables categ¢ricas y dividir en train/test." 

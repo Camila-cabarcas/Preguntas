@@ -1,0 +1,1 @@
+"2) Escribe una funci¢n llamada limpiar_sensores(df) que use pandas para convertir a datetime, eliminar duplicados y ordenar cronol¢gicamente." 

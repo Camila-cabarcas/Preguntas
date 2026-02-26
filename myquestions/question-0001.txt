@@ -1,0 +1,1 @@
+"1) Escribe una funci¢n llamada analizar_ventas(df, categoria, region) que use pandas para filtrar datos y devolver un diccionario con 'total_ventas' y 'promedio_cantidad'." 
