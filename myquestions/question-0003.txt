@@ -1,1 +1,38 @@
-"3) Escribe una funci�n llamada aplicar_pca(X, n_componentes) que use sklearn para escalar datos y aplicar PCA." 
+"Problema 3
+Pipeline de Regresión con Selección de Características (Scikit-Learn)
+
+Una empresa de análisis de datos está construyendo un modelo de regresión lineal para predecir una variable objetivo a partir de múltiples variables explicativas.
+
+Sin embargo, utilizar demasiadas variables puede provocar sobreajuste (overfitting) y hacer que el modelo generalice mal a nuevos datos. Por esta razón, se desea aplicar un proceso de selección de características antes de entrenar el modelo.
+
+Se dispone de:
+
+  - Una matriz X con las variables predictoras.
+
+  - Un vector y con la variable objetivo.
+
+Para reducir la dimensionalidad, se desea seleccionar únicamente las k_features variables más relevantes según su relación estadística con la variable objetivo.
+
+Implemente la función:
+
+entrenar_con_seleccion(X, y, k_features)
+
+La función recibe:
+
+  - X: matriz o DataFrame con las variables predictoras.
+
+  - y: vector o arreglo con la variable objetivo.
+
+  - k_features: número de características que se desean seleccionar.
+
+La función debe:
+
+1. Utilizar SelectKBest con la métrica f_regression para seleccionar las k_features más relevantes.
+
+2. Entrenar un modelo de LinearRegression usando únicamente las características seleccionadas.
+
+3. Devolver una tupla con:
+
+  - el objeto SelectKBest entrenado
+
+  - el modelo LinearRegression entrenado" 
