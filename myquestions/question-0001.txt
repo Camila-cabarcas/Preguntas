@@ -1,1 +1,53 @@
-"1) Escribe una funci�n llamada analizar_ventas(df, categoria, region) que use pandas para filtrar datos y devolver un diccionario con 'total_ventas' y 'promedio_cantidad'." 
+"Problema 1:
+
+Una empresa de servicios por suscripción desea analizar la pérdida de clientes con el fin de identificar si está perdiendo a sus usuarios más valiosos. La retención de este tipo de clientes es crítica, ya que generan mayores ingresos y suelen tener mayor fidelidad a largo plazo.
+
+Se dispone de un DataFrame de pandas que contiene información de los clientes actuales y antiguos, incluyendo:
+
+Identificador del cliente
+
+Pago mensual del cliente
+
+Antigüedad del cliente en meses dentro de la plataforma
+
+Indicador de cancelación del servicio
+
+La empresa considera que un cliente es valioso cuando:
+
+Su pago mensual es mayor que el promedio de todos los clientes, y
+
+Tiene más de 12 meses de antigüedad en la plataforma.
+
+El objetivo es analizar qué proporción de estos clientes valiosos ha cancelado su suscripción.
+
+Implemente la función:
+
+analizar_churn(df)
+
+La función recibe:
+
+df: DataFrame de pandas que contiene la información de los clientes.
+
+El DataFrame incluye las siguientes columnas:
+
+pago_mensual: valor del pago mensual del cliente
+
+antiguedad: número de meses que el cliente ha permanecido en la plataforma
+
+cancelo: indica si el cliente canceló el servicio ("Si" o "No")
+
+La función debe:
+
+Calcular el pago mensual promedio de todos los clientes en el DataFrame.
+
+Filtrar los clientes cuyo:
+
+pago_mensual sea mayor que el promedio, y
+
+antiguedad sea mayor a 12 meses.
+
+Sobre ese grupo filtrado, calcular la tasa de cancelación, definida como la proporción de clientes cuyo valor en cancelo sea "Si".
+
+Retornar el resultado como un float redondeado a 4 decimales.
+
+Si el grupo filtrado está vacío, la función debe retornar 0.0." 
