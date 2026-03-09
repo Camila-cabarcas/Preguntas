@@ -4,19 +4,17 @@ Una empresa de servicios por suscripción desea analizar la pérdida de clientes
 
 Se dispone de un DataFrame de pandas que contiene información de los clientes actuales y antiguos, incluyendo:
 
-Identificador del cliente
+  - Identificador del cliente
 
-Pago mensual del cliente
+  - Pago mensual del cliente
 
-Antigüedad del cliente en meses dentro de la plataforma
+  - Antigüedad del cliente en meses dentro de la plataforma
 
-Indicador de cancelación del servicio
+  - Indicador de cancelación del servicio
 
 La empresa considera que un cliente es valioso cuando:
 
-Su pago mensual es mayor que el promedio de todos los clientes, y
-
-Tiene más de 12 meses de antigüedad en la plataforma.
+Su pago mensual es mayor que el promedio de todos los clientes, y tiene más de 12 meses de antigüedad en la plataforma.
 
 El objetivo es analizar qué proporción de estos clientes valiosos ha cancelado su suscripción.
 
@@ -30,24 +28,20 @@ df: DataFrame de pandas que contiene la información de los clientes.
 
 El DataFrame incluye las siguientes columnas:
 
-pago_mensual: valor del pago mensual del cliente
+  - pago_mensual: valor del pago mensual del cliente
 
-antiguedad: número de meses que el cliente ha permanecido en la plataforma
+  - antiguedad: número de meses que el cliente ha permanecido en la plataforma
 
-cancelo: indica si el cliente canceló el servicio ("Si" o "No")
+  - cancelo: indica si el cliente canceló el servicio ("Si" o "No")
 
 La función debe:
 
-Calcular el pago mensual promedio de todos los clientes en el DataFrame.
+  - Calcular el pago mensual promedio de todos los clientes en el DataFrame.
 
-Filtrar los clientes cuyo:
+  - Filtrar los clientes cuyo: pago_mensual sea mayor que el promedio, y antiguedad sea mayor a 12 meses.
 
-pago_mensual sea mayor que el promedio, y
+    Sobre ese grupo filtrado, calcular la tasa de cancelación, definida como la proporción de clientes cuyo valor en cancelo sea "Si".
 
-antiguedad sea mayor a 12 meses.
+    - Retornar el resultado como un float redondeado a 4 decimales.
 
-Sobre ese grupo filtrado, calcular la tasa de cancelación, definida como la proporción de clientes cuyo valor en cancelo sea "Si".
-
-Retornar el resultado como un float redondeado a 4 decimales.
-
-Si el grupo filtrado está vacío, la función debe retornar 0.0." 
+    - Si el grupo filtrado está vacío, la función debe retornar 0.0." 
