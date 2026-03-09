@@ -1,1 +1,43 @@
-"2) Escribe una funci�n llamada limpiar_sensores(df) que use pandas para convertir a datetime, eliminar duplicados y ordenar cronol�gicamente." 
+"Problema 2
+
+Una empresa de retail desea analizar su inventario de productos. Los precios de los productos varían significativamente entre diferentes categorías, por lo que comparar precios de forma global no es útil.
+
+Para poder analizar mejor los precios dentro de cada categoría, se desea normalizar el precio de cada producto comparándolo con el precio máximo de su propia categoría.
+
+Se dispone de un DataFrame de pandas que contiene información del inventario, incluyendo:
+
+  - producto_id: identificador único del producto
+
+  - categoria: categoría a la que pertenece el producto
+
+  - precio: precio del producto
+
+El objetivo es calcular qué tan caro es cada producto relativo al producto más caro dentro de su misma categoría.
+
+Implemente la función:
+
+normalizar_por_categoria(df)
+
+La función recibe:
+
+  - df: DataFrame de pandas con la información del inventario.
+
+El DataFrame incluye las siguientes columnas:
+
+  - producto_id
+
+  - categoria
+
+  - precio
+
+La función debe:
+
+1. Crear una nueva columna llamada precio_relativo.
+
+2. El valor de esta columna debe ser:ç
+
+precio_relativo = precio / precio_maximo_de_su_categoria
+
+3. El precio máximo debe calcularse solo dentro de la misma categoría del producto.
+
+4. Devolver el DataFrame resultante con todas las columnas originales y la nueva columna precio_relativo." 
