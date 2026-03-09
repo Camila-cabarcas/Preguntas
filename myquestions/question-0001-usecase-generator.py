@@ -8,14 +8,13 @@ def generar_caso_de_uso_analizar_churn():
     para la función analizar_churn.
     """
 
-    # 1. Número aleatorio de clientes
-    n = random.randint(10, 30)
+    # 1. Configuración aleatoria del número de clientes
+    n_rows = random.randint(10, 30)   # Entre 10 y 30 clientes
 
-    # 2. Crear datos aleatorios
-    pago_mensual = np.random.uniform(10, 200, n)
-    antiguedad = np.random.randint(1, 36, n)
-
-    cancelo = np.random.choice(["Si", "No"], size=n)
+    # 2. Generar datos aleatorios
+    pago_mensual = np.random.uniform(20, 200, n_rows)
+    antiguedad = np.random.randint(1, 48, n_rows)
+    cancelo = np.random.choice(["Si", "No"], size=n_rows)
 
     df = pd.DataFrame({
         "pago_mensual": pago_mensual,
@@ -23,42 +22,48 @@ def generar_caso_de_uso_analizar_churn():
         "cancelo": cancelo
     })
 
-    # -------------------------------------------------
-    # INPUT
-    # -------------------------------------------------
+    # ---------------------------------------------------------
+    # 3. Construir el objeto INPUT
+    # ---------------------------------------------------------
 
     input_data = {
-        "df": df.copy()
+        'df': df.copy()  # Copia para evitar modificar el original
     }
 
-    # -------------------------------------------------
-    # OUTPUT ESPERADO
-    # -------------------------------------------------
+    # ---------------------------------------------------------
+    # 4. Calcular el OUTPUT esperado (Ground Truth)
+    #    Aquí replicamos la lógica que debería tener analizar_churn
+    # ---------------------------------------------------------
 
-    promedio = df["pago_mensual"].mean()
+    # A. Calcular promedio de pago mensual
+    promedio_pago = df["pago_mensual"].mean()
 
+    # B. Filtrar clientes valiosos
     clientes_valiosos = df[
-        (df["pago_mensual"] > promedio) &
+        (df["pago_mensual"] > promedio_pago) &
         (df["antiguedad"] > 12)
     ]
 
+    # C. Calcular tasa de cancelación
     if len(clientes_valiosos) == 0:
-        tasa = 0.0
+        tasa_cancelacion = 0.0
     else:
-        tasa = (clientes_valiosos["cancelo"] == "Si").mean()
+        tasa_cancelacion = (clientes_valiosos["cancelo"] == "Si").mean()
 
-    output_data = round(float(tasa), 4)
+    output_data = round(float(tasa_cancelacion), 4)
 
     return input_data, output_data
 
 
-# Ejemplo de uso
+# --- Ejemplo de uso ---
 if __name__ == "__main__":
 
-    entrada, salida = generar_caso_de_uso_analizar_churn()
+    # Generamos un caso
+    entrada, salida_esperada = generar_caso_de_uso_analizar_churn()
 
-    print("INPUT:")
+    print("=== INPUT (Diccionario) ===")
+    print("DataFrame (primeras 5 filas):")
     print(entrada["df"].head())
 
-    print("\nOUTPUT ESPERADO:")
-    print(salida)
+    print("\n=== OUTPUT ESPERADO ===")
+    print("Tasa de cancelación esperada:", salida_esperada)
