@@ -1,1 +1,45 @@
-"4) Escribe una funci�n llamada preparar_modelo_split(df, target_col, cat_col) que use sklearn para codificar variables categ�ricas y dividir en train/test." 
+"Problema 4
+Clasificación con Balanceo de Clases (Scikit-Learn)
+
+Una empresa industrial está desarrollando un sistema de detección automática de fallos en maquinaria usando datos de sensores.
+
+En este tipo de problemas, los casos de fallo de maquinaria son poco frecuentes, mientras que la mayoría de los registros corresponden a funcionamiento normal. Este desequilibrio entre clases puede causar que los modelos de clasificación favorezcan la clase mayoritaria y tengan un mal desempeño detectando fallos.
+
+Para mitigar este problema, se desea entrenar un modelo que asigne mayor peso a la clase minoritaria durante el entrenamiento.
+
+Se dispone de:
+
+  - Una matriz X con variables predictoras (lecturas de sensores).
+
+  - Un vector y con la etiqueta de clase:
+
+    · 0 → funcionamiento normal
+
+    · 1 → fallo de maquinaria
+
+Implemente la función:
+
+clasificador_balanceado(X, y)
+
+La función recibe:
+
+  - X: matriz o DataFrame con las variables predictoras.
+
+  - y: vector o arreglo con las etiquetas de clase.
+
+La función debe:
+
+1. Dividir los datos en 80% entrenamiento y 20% prueba utilizando train_test_split con random_state=42.
+
+2. Instanciar un RandomForestClassifier con los siguientes parámetros:
+
+    class_weight='balanced'
+    random_state=42
+
+3. Entrenar el modelo usando el conjunto de entrenamiento.
+
+4. Realizar predicciones sobre el conjunto de prueba.
+
+5. Calcular el F1-Score utilizando f1_score de sklearn.metrics.
+
+6. Devolver el F1-Score obtenido en el conjunto de prueba." 
