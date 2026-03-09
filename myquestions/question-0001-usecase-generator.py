@@ -12,11 +12,13 @@ def generar_caso_de_uso_analizar_churn():
     n_rows = random.randint(10, 30)   # Entre 10 y 30 clientes
 
     # 2. Generar datos aleatorios
+    cliente_id = np.arange(1, n_rows + 1)
     pago_mensual = np.random.uniform(20, 200, n_rows)
     antiguedad = np.random.randint(1, 48, n_rows)
     cancelo = np.random.choice(["Si", "No"], size=n_rows)
 
     df = pd.DataFrame({
+        "cliente_id": cliente_id,
         "pago_mensual": pago_mensual,
         "antiguedad": antiguedad,
         "cancelo": cancelo
@@ -27,7 +29,7 @@ def generar_caso_de_uso_analizar_churn():
     # ---------------------------------------------------------
 
     input_data = {
-        'df': df.copy()  # Copia para evitar modificar el original
+        "df": df.copy()  # Copia para evitar modificar el original
     }
 
     # ---------------------------------------------------------
@@ -45,7 +47,7 @@ def generar_caso_de_uso_analizar_churn():
     ]
 
     # C. Calcular tasa de cancelación
-    if len(clientes_valiosos) == 0:
+    if clientes_valiosos.empty:
         tasa_cancelacion = 0.0
     else:
         tasa_cancelacion = (clientes_valiosos["cancelo"] == "Si").mean()
