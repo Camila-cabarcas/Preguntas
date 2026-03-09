@@ -1,5 +1,5 @@
- ###**Proyecto Laboratorio IA**
--**Nombre:** Maria Camila Cabarcas Berrio 
--**Correo:** camila.cabarcas@udea.edu.co
--**Curso:** Modelos y simulación de Sistemas I
--**Profesor:** Raúl Ramos
+**Proyecto Laboratorio IA**<br>
+**Nombre:** Maria Camila Cabarcas Berrio <br>
+**Correo:** camila.cabarcas@udea.edu.co<br>
+**Curso:** Modelos y simulación de Sistemas I<br>
+**Profesor:** Raúl Ramos
