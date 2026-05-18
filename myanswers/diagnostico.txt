@@ -1,0 +1,95 @@
+DIAGNÓSTICO DE GENERADORES DE CASOS DE USO
+
+========================================================
+PREGUNTA 0409 - clasificar_pulsos_radio
+========================================================
+
+Problema identificado:
+El generador de casos de uso no valida completamente lo solicitado en el enunciado.
+
+Observaciones:
+
+1. El enunciado exige construir un pipeline de preprocesamiento y devolver:
+   {
+       'modelo': KNeighborsClassifier,
+       'accuracy': float
+   }
+
+   Sin embargo, el generador únicamente ejecuta la función y acepta cualquier
+   estructura retornada sin verificar explícitamente:
+   - que exista un pipeline,
+   - que el modelo sea realmente un KNeighborsClassifier,
+   - ni que el accuracy corresponda al modelo solicitado.
+
+2. En la solución implementada, el pipeline se construye en la función
+   clasificar_pulsos_radio (líneas aproximadas 45-60 de mi solución),
+   pero el generador de casos de uso únicamente evalúa el resultado final:
+   output_data = clasificar_pulsos_radio(df, "objetivo")
+
+   Esto significa que una implementación incorrecta podría pasar el caso de uso
+   aunque no utilice pipeline o incluso aunque utilice otro clasificador.
+
+3. El generador tampoco verifica que el preprocesamiento se ajuste únicamente
+   sobre train, lo cual es importante para evitar data leakage.
+
+4. El generador introduce una columna artificial:
+   flujo_correlacionado
+   pero nunca comprueba realmente si la función eliminó la multicolinealidad.
+   Solo ejecuta la función y acepta cualquier salida compatible.
+
+Referencias:
+- Generador: líneas aproximadas donde se calcula:
+      output_data = clasificar_pulsos_radio(...)
+- Solución: líneas donde se crea el Pipeline y el KNN.
+
+
+========================================================
+PREGUNTA 0440 - calibrar_y_comparar
+========================================================
+
+Problema identificado:
+El generador de casos de uso crea datasets inconsistentes con el objetivo del
+ejercicio y además ignora parámetros importantes definidos en los perfiles.
+
+Observaciones:
+
+1. En los perfiles se define el parámetro:
+      weights=[...]
+
+   Sin embargo, en la llamada a make_classification se elimina explícitamente:
+
+      **{k: v for k, v in params.items() if k != "weights"}
+
+   Esto provoca que el dataset NO tenga realmente el desbalance especificado
+   en cada perfil.
+
+2. El comentario:
+      # Aplicar desbalance aproximado
+
+   es incorrecto, porque nunca se aplica el parámetro weights al dataset.
+
+3. El ejercicio busca comparar Brier Score antes y después de calibración,
+   pero el generador no valida realmente que:
+   - se use CalibratedClassifierCV,
+   - se utilice method="isotonic",
+   - ni que cv="prefit".
+
+   Solo acepta cualquier diccionario con valores numéricos.
+
+4. En mi solución, la calibración correcta ocurre en las líneas aproximadas
+   donde se instancia:
+      CalibratedClassifierCV(
+          estimator=modelo,
+          cv="prefit",
+          method="isotonic"
+      )
+
+   pero el generador nunca inspecciona estos parámetros.
+
+5. El generador tampoco verifica que StandardScaler se ajuste únicamente
+   sobre train antes de transformar test.
+
+Referencias:
+- Generador: línea donde se elimina "weights" del diccionario params.
+- Solución: líneas donde se realiza la calibración isotónica y el cálculo
+  de Brier Score.
