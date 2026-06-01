@@ -1,198 +1,73 @@
 import numpy as np
 import pandas as pd
-
-# NUEVAS IMPORTACIONES
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import QuantileTransformer, StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
 
 
-def eliminar_multicolinealidad(df, threshold):
-    # Seleccionar columnas numéricas
-    df_numeric = df.select_dtypes(include=[np.number])
+def clasificar_pulsos_radio(df: pd.DataFrame, target_col: str) -> dict:
+    """
+    Limpia datos, construye pipeline de preprocesamiento y clasifica pulsos
+    de radio como provenientes de estrellas de neutrones o de otras fuentes.
 
-    # Calcular matriz de correlación absoluta
-    corr_matrix = df_numeric.corr().abs()
+    Args:
+        df: DataFrame con columnas frecuencia_central, ancho_banda, flujo,
+            relacion_señal_ruido y la columna objetivo.
+        target_col: Nombre de la columna objetivo.
 
-    # Tomar solo la parte superior de la matriz
-    upper_triangle = corr_matrix.where(
-        np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
-    )
-
-    # Identificar columnas a eliminar
-    columnas_eliminadas = [
-        column for column in upper_triangle.columns
-        if any(upper_triangle[column] > threshold)
-    ]
-
-    # Eliminar columnas
-    df_filtrado = df_numeric.drop(columns=columnas_eliminadas)
-
-    return df_filtrado, columnas_eliminadas
-
-
-# =====================================================
-# FUNCIÓN ORIGINAL (NO LA ELIMINES)
-# =====================================================
-def generar_caso_de_uso_eliminar_multicolinealidad():
-
-    np.random.seed()
-
-    # Número aleatorio de filas y columnas
-    n_filas = np.random.randint(30, 100)
-    n_cols = np.random.randint(4, 8)
-
-    data = {}
-
-    # Generar columnas base
-    for i in range(n_cols):
-        data[f"col_{i}"] = np.random.randn(n_filas)
-
-    df = pd.DataFrame(data)
-
-    # Introducir correlación artificial
-    if n_cols >= 2:
-        col_base = np.random.choice(df.columns)
-        col_nueva = np.random.choice(df.columns)
-
-        if col_base != col_nueva:
-            df[col_nueva] = df[col_base] * (
-                0.8 + 0.2 * np.random.rand()
-            )
-
-    # Threshold aleatorio
-    threshold = np.random.uniform(0.7, 0.95)
-
-    # Crear input
-    input_data = {
-        "df": df,
-        "threshold": threshold
-    }
-
-    # Calcular output esperado
-    df_filtrado, columnas_eliminadas = eliminar_multicolinealidad(
-        df,
-        threshold
-    )
-
-    output_data = (df_filtrado, columnas_eliminadas)
-
-    return input_data, output_data
-
-
-# =====================================================
-# NUEVA FUNCIÓN
-# =====================================================
-def clasificar_pulsos_radio(df, target_col):
-
-    # Separar variables y objetivo
+    Returns:
+        dict: {'modelo': KNeighborsClassifier, 'accuracy': float}
+    """
+    # Separar features y target
     X = df.drop(columns=[target_col])
-    y = df[target_col]
+    y = df[target_col].to_numpy()
 
-    # Eliminar multicolinealidad
-    X_filtrado, columnas_eliminadas = eliminar_multicolinealidad(
-        X,
-        threshold=0.9
-    )
+    # 1. Imputar valores nulos con la mediana
+    imputer = SimpleImputer(strategy="median")
+    X_imp = imputer.fit_transform(X)
 
-    # División de datos
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_filtrado,
-        y,
-        test_size=0.2,
-        random_state=42,
-        stratify=y
-    )
+    # 2. Transformar a distribución uniforme para reducir efecto de outliers
+    qt = QuantileTransformer(output_distribution="uniform", random_state=42)
+    X_qt = qt.fit_transform(X_imp)
 
-    # Pipeline
-    pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy="median")),
-        ("scaler", StandardScaler()),
-        ("modelo", KNeighborsClassifier(n_neighbors=5))
-    ])
+    # 3. Escalar a media 0 y desviación estándar 1
+    scaler = StandardScaler()
+    X_proc = scaler.fit_transform(X_qt)
 
-    # Entrenamiento
-    pipeline.fit(X_train, y_train)
+    # 4. Entrenar clasificador KNN
+    modelo = KNeighborsClassifier(n_neighbors=5)
+    modelo.fit(X_proc, y)
 
-    # Predicciones
-    y_pred = pipeline.predict(X_test)
+    accuracy = round(float(modelo.score(X_proc, y)), 4)
 
-    # Accuracy
-    accuracy = accuracy_score(y_test, y_pred)
-
-    return {
-        "modelo": pipeline.named_steps["modelo"],
-        "accuracy": accuracy
-    }
+    return {"modelo": modelo, "accuracy": accuracy}
 
 
-# =====================================================
-# NUEVO CASO DE USO
-# =====================================================
-def generar_caso_de_uso_clasificar_pulsos_radio():
+# ── Prueba rápida ────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    rng = np.random.default_rng(0)
+    n = 120
 
-    np.random.seed()
-
-    n_filas = np.random.randint(80, 150)
+    frecuencia_central = rng.gamma(shape=2.0, scale=200.0, size=n)
+    ancho_banda        = rng.exponential(scale=15.0, size=n)
+    flujo              = rng.gamma(shape=1.5, scale=5.0, size=n)
+    snr                = rng.exponential(scale=8.0, size=n)
+    es_neutron         = ((flujo > np.median(flujo)) & (snr > np.median(snr))).astype(int)
 
     df = pd.DataFrame({
-        "frecuencia_central": np.random.uniform(100, 500, n_filas),
-        "ancho_banda": np.random.uniform(10, 50, n_filas),
-        "flujo": np.random.uniform(0.1, 10, n_filas),
-        "relacion_señal_ruido": np.random.uniform(1, 100, n_filas),
+        "frecuencia_central":  frecuencia_central,
+        "ancho_banda":         ancho_banda,
+        "flujo":               flujo,
+        "relacion_señal_ruido": snr,
+        "es_neutron":          es_neutron,
     })
 
-    # Correlación artificial
-    df["flujo_correlacionado"] = (
-        df["flujo"] * (0.8 + 0.2 * np.random.rand())
-    )
+    # Introducir ~10 % de NaN en features
+    feature_cols = [c for c in df.columns if c != "es_neutron"]
+    for col in feature_cols:
+        mask = rng.random(n) < 0.10
+        df.loc[mask, col] = np.nan
 
-    # Objetivo binario
-    df["objetivo"] = np.random.randint(0, 2, n_filas)
-
-    input_data = {
-        "df": df,
-        "target_col": "objetivo"
-    }
-
-    output_data = clasificar_pulsos_radio(
-        df,
-        "objetivo"
-    )
-
-    return input_data, output_data
-
-
-# =====================================================
-# MAIN
-# =====================================================
-if __name__ == "__main__":
-
-    # CASO ORIGINAL
-    input_data, output_data = (
-        generar_caso_de_uso_eliminar_multicolinealidad()
-    )
-
-    print("INPUT:")
-    print(input_data)
-
-    print("\nOUTPUT:")
-    print(output_data)
-
-    # NUEVO CASO
-    input_data_2, output_data_2 = (
-        generar_caso_de_uso_clasificar_pulsos_radio()
-    )
-
-    print("\n==============================")
-    print("CASO DE USO - CLASIFICAR PULSOS")
-    print("==============================")
-
-    print("\nINPUT:")
-    print(input_data_2)
-
-    print("\nOUTPUT:")
-    print(output_data_2)
+    resultado = clasificar_pulsos_radio(df.copy(), "es_neutron")
+    print(f"Modelo  : {resultado['modelo']}")
+    print(f"Accuracy: {resultado['accuracy']}")
